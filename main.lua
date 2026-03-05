@@ -1,4 +1,10 @@
-local library = loadstring(readfile("library.lua"))()
+local library
+
+if isfile("library.lua") then
+    library = loadstring(readfile("library.lua"))()
+else
+    library = loadstring(game:HttpGet("https://raw.githubusercontent.com/tingoman/atlgg/refs/heads/main/library.lua"))()
+end
 
 local flags         = library.flags
 local themes        = library.themes
