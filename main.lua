@@ -68,6 +68,27 @@ getgenv().amethyst = {
         ['CheckForceField'] = false,
         ['WallCheck']       = false,
     },
+    ['World'] = {
+        ['Enabled'] = false,
+        ['Fog'] = { ['Enabled'] = false, ['Color'] = Color3.new(1, 1, 1), ['Start'] = 10000, ['End'] = 1000 },
+        ['Ambient'] = { ['Enabled'] = false, ['Color'] = Color3.new(1, 1, 1) },
+        ['Brightness'] = { ['Enabled'] = false, ['Value'] = 0 },
+        ['ClockTime'] = { ['Enabled'] = false, ['Value'] = 24 },
+        ['WorldExposure'] = { ['Enabled'] = false, ['Value'] = -0.1 },
+    },
+    ['Skyboxes'] = {
+        ['Enabled'] = false,
+        ['Selected'] = 'None',
+    },
+    ['Esp'] = {
+        ['Boxes'] = { ['Enabled'] = false, ['Type'] = 'Corner', ['Filled'] = { ['Enabled'] = false, ['Alpha'] = 0.7, ['Colors'] = { ['Enemy'] = Color3.fromRGB(255, 0, 0), ['Priority'] = Color3.fromRGB(255, 255, 0), ['Neutral'] = Color3.new(1, 1, 1), ['Friendly'] = Color3.fromRGB(0, 255, 255) } }, ['Colors'] = { ['Enemy'] = Color3.fromRGB(255, 0, 0), ['Priority'] = Color3.fromRGB(255, 255, 0), ['Neutral'] = Color3.new(1, 1, 1), ['Friendly'] = Color3.fromRGB(0, 255, 255) } },
+        ['Names'] = { ['Enabled'] = false, ['Colors'] = { ['Enemy'] = Color3.fromRGB(255, 0, 0), ['Priority'] = Color3.fromRGB(255, 255, 0), ['Neutral'] = Color3.new(1, 1, 1), ['Friendly'] = Color3.fromRGB(0, 255, 255) } },
+        ['Health'] = { ['Enabled'] = false, ['High'] = Color3.fromRGB(0, 255, 0), ['Low'] = Color3.fromRGB(255, 0, 0), ['Colors'] = { ['Enemy'] = Color3.fromRGB(255, 0, 0), ['Priority'] = Color3.fromRGB(255, 255, 0), ['Neutral'] = Color3.new(1, 1, 1), ['Friendly'] = Color3.fromRGB(0, 255, 255) } },
+        ['Distance'] = { ['Enabled'] = false, ['Colors'] = { ['Enemy'] = Color3.fromRGB(255, 0, 0), ['Priority'] = Color3.fromRGB(255, 255, 0), ['Neutral'] = Color3.new(1, 1, 1), ['Friendly'] = Color3.fromRGB(0, 255, 255) } },
+        ['Weapon'] = { ['Enabled'] = false, ['Colors'] = { ['Enemy'] = Color3.fromRGB(255, 0, 0), ['Priority'] = Color3.fromRGB(255, 255, 0), ['Neutral'] = Color3.new(1, 1, 1), ['Friendly'] = Color3.fromRGB(0, 255, 255) } },
+        ['Tracer'] = { ['Enabled'] = false, ['From'] = 'Bottom', ['Colors'] = { ['Enemy'] = Color3.fromRGB(255, 0, 0), ['Priority'] = Color3.fromRGB(255, 255, 0), ['Neutral'] = Color3.new(1, 1, 1), ['Friendly'] = Color3.fromRGB(0, 255, 255) } },
+        ['PreviewPriority'] = 'Enemy',
+    },
 }
 
 
@@ -157,6 +178,30 @@ local function get_closest_point_on_part(part, scale)
 end
 
 local MarketplaceService = game:GetService("MarketplaceService")
+local lighting = game:GetService("Lighting")
+local world_saved = {
+    FogColor = lighting.FogColor,
+    FogStart = lighting.FogStart,
+    FogEnd = lighting.FogEnd,
+    Ambient = lighting.Ambient,
+    Brightness = lighting.Brightness,
+    ClockTime = lighting.ClockTime,
+    ExposureCompensation = lighting.ExposureCompensation,
+}
+local skyboxes_data = {
+    ['None'] = nil,
+    ['Dark Sky'] = { SkyboxUp = "rbxassetid://570555929", SkyboxRt = "rbxassetid://570555882", SkyboxDn = "rbxassetid://570555964", SkyboxFt = "rbxassetid://570555800", SkyboxLf = "rbxassetid://570555840", SkyboxBk = "rbxassetid://570555736" },
+    ['Art Mountain'] = { SkyboxUp = "rbxassetid://2128462236", SkyboxRt = "rbxassetid://2128462027", SkyboxLf = "rbxassetid://2128462027", SkyboxFt = "rbxassetid://2128458653", SkyboxBk = "rbxassetid://2128458653", SkyboxDn = "rbxassetid://2128462480" },
+    ['Vaporwave'] = { SkyboxUp = "rbxassetid://1417494643", SkyboxRt = "rbxassetid://1417494499", SkyboxLf = "rbxassetid://1417494402", SkyboxFt = "rbxassetid://1417494253", SkyboxBk = "rbxassetid://1417494030", SkyboxDn = "rbxassetid://1417494146" },
+    ['Nebula'] = { SkyboxUp = "rbxassetid://159454288", SkyboxRt = "rbxassetid://159454300", SkyboxLf = "rbxassetid://159454286", SkyboxFt = "rbxassetid://159454293", SkyboxBk = "rbxassetid://159454299", SkyboxDn = "rbxassetid://159454296" },
+    ['Twilight'] = { SkyboxUp = "rbxassetid://264907379", SkyboxRt = "rbxassetid://264908886", SkyboxLf = "rbxassetid://264909758", SkyboxFt = "rbxassetid://264909420", SkyboxBk = "rbxassetid://264908339", SkyboxDn = "rbxassetid://264907909" },
+    ['Lake Sky'] = { SkyboxRt = "rbxassetid://6823531746", SkyboxUp = "rbxassetid://6823528533", SunTextureId = "rbxassetid://5392574622", SkyboxDn = "rbxassetid://6823525702", SkyboxFt = "rbxassetid://6823482923", SkyboxLf = "rbxassetid://6823530023", SkyboxBk = "rbxassetid://6823523318" },
+    ['Alien Red'] = { SkyboxUp = "rbxassetid://7123412196", SkyboxRt = "rbxassetid://7123402505", SkyboxDn = "rbxassetid://7123387679", SkyboxFt = "rbxassetid://7123390433", SkyboxLf = "rbxassetid://7123394786", SkyboxBk = "rbxassetid://7123385217" },
+    ['Black Mesa'] = { SkyboxUp = "rbxassetid://9569598752", SkyboxRt = "rbxassetid://9569601267", SkyboxDn = "rbxassetid://9569613307", SkyboxFt = "rbxassetid://9569611418", SkyboxLf = "rbxassetid://9569608166", SkyboxBk = "rbxassetid://9569742122" },
+    ['Clouds'] = { SkyboxUp = "rbxassetid://570557727", SkyboxRt = "rbxassetid://570557672", SkyboxLf = "rbxassetid://570557620", SkyboxFt = "rbxassetid://570557559", SkyboxBk = "rbxassetid://570557514", SkyboxDn = "rbxassetid://570557775" },
+    ['Kor'] = { SkyboxUp = "rbxassetid://17104312202", SkyboxRt = "rbxassetid://17108139839", SkyboxDn = "rbxassetid://17108126309", SkyboxFt = "rbxassetid://17108130647", SkyboxLf = "rbxassetid://17108136040", SkyboxBk = "rbxassetid://17104221094" },
+}
+local original_sky_saved = nil
 local GameProductInfo    = MarketplaceService:GetProductInfo(game.PlaceId)
 local GameInformation    = {}
 setmetatable(GameInformation, {
@@ -210,22 +255,73 @@ local sa_can_shoot    = false
 local function esp_refresh() if esp_preview_obj and esp_preview_obj.refresh_elements then esp_preview_obj.refresh_elements() end end
 
 local function build_esp_ui(section)
-    section:toggle({ name = "Enabled",   flag = "Enabled",      default = false, callback = esp_refresh })
-    section:toggle({ name = "Names",     flag = "Names",        default = true,  callback = esp_refresh })
-    :colorpicker({ name = "Color", flag = "Name_Color", color = Color3.fromRGB(255, 255, 255), callback = esp_refresh })
-    local box_tog = section:toggle({ name = "Boxes", flag = "Boxes", default = true, callback = esp_refresh })
-    section:dropdown({ name = "Box Type", flag = "Box_Type", items = { "Corner", "Full" }, default = "Corner", callback = esp_refresh })
-    box_tog:colorpicker({ name = "Color", flag = "Box_Color", color = Color3.fromRGB(255, 255, 255), callback = esp_refresh })
-    section:toggle({ name = "Healthbar", flag = "Healthbar", default = true, callback = esp_refresh })
-    :colorpicker({ name = "High HP", flag = "Health_High", color = Color3.fromRGB(0, 255, 0), callback = esp_refresh })
-    :colorpicker({ name = "Low HP",  flag = "Health_Low",  color = Color3.fromRGB(255, 0, 0), callback = esp_refresh })
-    section:toggle({ name = "Distance",  flag = "Distance",  default = true, callback = esp_refresh })
-    :colorpicker({ name = "Color", flag = "Distance_Color", color = Color3.fromRGB(255, 255, 255), callback = esp_refresh })
-    section:toggle({ name = "Weapon",    flag = "Weapon",    default = false, callback = esp_refresh })
-    :colorpicker({ name = "Color", flag = "Weapon_Color", color = Color3.fromRGB(255, 255, 255), callback = esp_refresh })
-    section:dropdown({ name = "Show", flag = "esp_show", items = { "Enemy", "Priority", "Neutral", "Friendly" }, multi = true, default = { "Enemy", "Priority", "Neutral", "Friendly" }, callback = esp_refresh })
-    section:colorpicker({ name = "Enemy Color",    flag = "esp_enemy_color",    color = Color3.fromRGB(255, 0, 0),   callback = esp_refresh })
-    section:colorpicker({ name = "Friendly Color", flag = "esp_friendly_color", color = Color3.fromRGB(0, 255, 255), callback = esp_refresh })
+    section:toggle({ name = "Enabled", flag = "Enabled", default = false, callback = esp_refresh })
+    section:dropdown({ name = "Priorities", flag = "esp_show", items = { "Enemy", "Priority", "Neutral", "Friendly" }, multi = true, scrolling = true, default = { "Enemy", "Priority", "Neutral", "Friendly" }, callback = function(v)
+        for _, feat in ipairs({ "boxes", "filled", "names", "health", "distance", "weapon", "tracer" }) do
+            for _, p in ipairs({ "Enemy", "Priority", "Neutral", "Friendly" }) do
+                local flag = "esp_" .. feat .. "_" .. p:lower() .. "_color"
+                if visible_flags[flag] then
+                    local found = false
+                    for _, s in ipairs(v or {}) do if s == p then found = true break end end
+                    visible_flags[flag](found)
+                end
+            end
+        end
+        esp_refresh()
+    end })
+    section:toggle({ name = "Boxes", flag = "Boxes", default = amethyst['Esp']['Boxes']['Enabled'], callback = function(v) amethyst['Esp']['Boxes']['Enabled'] = v esp_refresh() end })
+    :colorpicker({ name = "Enemy", flag = "esp_boxes_enemy_color", visible = false, conditional = true, color = amethyst['Esp']['Boxes']['Colors']['Enemy'], callback = function(c) amethyst['Esp']['Boxes']['Colors']['Enemy'] = c esp_refresh() end })
+    :colorpicker({ name = "Priority", flag = "esp_boxes_priority_color", visible = false, conditional = true, color = amethyst['Esp']['Boxes']['Colors']['Priority'], callback = function(c) amethyst['Esp']['Boxes']['Colors']['Priority'] = c esp_refresh() end })
+    :colorpicker({ name = "Neutral", flag = "esp_boxes_neutral_color", visible = false, conditional = true, color = amethyst['Esp']['Boxes']['Colors']['Neutral'], callback = function(c) amethyst['Esp']['Boxes']['Colors']['Neutral'] = c esp_refresh() end })
+    :colorpicker({ name = "Friendly", flag = "esp_boxes_friendly_color", visible = false, conditional = true, color = amethyst['Esp']['Boxes']['Colors']['Friendly'], callback = function(c) amethyst['Esp']['Boxes']['Colors']['Friendly'] = c esp_refresh() end })
+    section:dropdown({ name = "Box Type", flag = "Box_Type", items = { "Corner", "Full" }, default = amethyst['Esp']['Boxes']['Type'], callback = function(v) amethyst['Esp']['Boxes']['Type'] = v esp_refresh() end })
+    section:toggle({ name = "Filled", flag = "esp_filled", default = amethyst['Esp']['Boxes']['Filled']['Enabled'], callback = function(v) amethyst['Esp']['Boxes']['Filled']['Enabled'] = v esp_refresh() end })
+    :slider({ name = "Alpha", flag = "esp_filled_alpha", min = 0, max = 100, default = (amethyst['Esp']['Boxes']['Filled']['Alpha'] or 0.7) * 100, interval = 1, suffix = "%", callback = function(v) amethyst['Esp']['Boxes']['Filled']['Alpha'] = v / 100 esp_refresh() end })
+    :colorpicker({ name = "Enemy", flag = "esp_filled_enemy_color", visible = false, conditional = true, color = amethyst['Esp']['Boxes']['Filled']['Colors']['Enemy'], callback = function(c) amethyst['Esp']['Boxes']['Filled']['Colors']['Enemy'] = c esp_refresh() end })
+    :colorpicker({ name = "Priority", flag = "esp_filled_priority_color", visible = false, conditional = true, color = amethyst['Esp']['Boxes']['Filled']['Colors']['Priority'], callback = function(c) amethyst['Esp']['Boxes']['Filled']['Colors']['Priority'] = c esp_refresh() end })
+    :colorpicker({ name = "Neutral", flag = "esp_filled_neutral_color", visible = false, conditional = true, color = amethyst['Esp']['Boxes']['Filled']['Colors']['Neutral'], callback = function(c) amethyst['Esp']['Boxes']['Filled']['Colors']['Neutral'] = c esp_refresh() end })
+    :colorpicker({ name = "Friendly", flag = "esp_filled_friendly_color", visible = false, conditional = true, color = amethyst['Esp']['Boxes']['Filled']['Colors']['Friendly'], callback = function(c) amethyst['Esp']['Boxes']['Filled']['Colors']['Friendly'] = c esp_refresh() end })
+    section:toggle({ name = "Names", flag = "Names", default = amethyst['Esp']['Names']['Enabled'], callback = function(v) amethyst['Esp']['Names']['Enabled'] = v esp_refresh() end })
+    :colorpicker({ name = "Enemy", flag = "esp_names_enemy_color", visible = false, conditional = true, color = amethyst['Esp']['Names']['Colors']['Enemy'], callback = function(c) amethyst['Esp']['Names']['Colors']['Enemy'] = c esp_refresh() end })
+    :colorpicker({ name = "Priority", flag = "esp_names_priority_color", visible = false, conditional = true, color = amethyst['Esp']['Names']['Colors']['Priority'], callback = function(c) amethyst['Esp']['Names']['Colors']['Priority'] = c esp_refresh() end })
+    :colorpicker({ name = "Neutral", flag = "esp_names_neutral_color", visible = false, conditional = true, color = amethyst['Esp']['Names']['Colors']['Neutral'], callback = function(c) amethyst['Esp']['Names']['Colors']['Neutral'] = c esp_refresh() end })
+    :colorpicker({ name = "Friendly", flag = "esp_names_friendly_color", visible = false, conditional = true, color = amethyst['Esp']['Names']['Colors']['Friendly'], callback = function(c) amethyst['Esp']['Names']['Colors']['Friendly'] = c esp_refresh() end })
+    section:toggle({ name = "Health", flag = "Healthbar", default = amethyst['Esp']['Health']['Enabled'], callback = function(v) amethyst['Esp']['Health']['Enabled'] = v esp_refresh() end })
+    :colorpicker({ name = "High", flag = "Health_High", color = amethyst['Esp']['Health']['High'], callback = function(c) amethyst['Esp']['Health']['High'] = c esp_refresh() end })
+    :colorpicker({ name = "Low", flag = "Health_Low", color = amethyst['Esp']['Health']['Low'], callback = function(c) amethyst['Esp']['Health']['Low'] = c esp_refresh() end })
+    :colorpicker({ name = "Enemy", flag = "esp_health_enemy_color", visible = false, conditional = true, color = amethyst['Esp']['Health']['Colors']['Enemy'], callback = function(c) amethyst['Esp']['Health']['Colors']['Enemy'] = c esp_refresh() end })
+    :colorpicker({ name = "Priority", flag = "esp_health_priority_color", visible = false, conditional = true, color = amethyst['Esp']['Health']['Colors']['Priority'], callback = function(c) amethyst['Esp']['Health']['Colors']['Priority'] = c esp_refresh() end })
+    :colorpicker({ name = "Neutral", flag = "esp_health_neutral_color", visible = false, conditional = true, color = amethyst['Esp']['Health']['Colors']['Neutral'], callback = function(c) amethyst['Esp']['Health']['Colors']['Neutral'] = c esp_refresh() end })
+    :colorpicker({ name = "Friendly", flag = "esp_health_friendly_color", visible = false, conditional = true, color = amethyst['Esp']['Health']['Colors']['Friendly'], callback = function(c) amethyst['Esp']['Health']['Colors']['Friendly'] = c esp_refresh() end })
+    section:toggle({ name = "Distance", flag = "Distance", default = amethyst['Esp']['Distance']['Enabled'], callback = function(v) amethyst['Esp']['Distance']['Enabled'] = v esp_refresh() end })
+    :colorpicker({ name = "Enemy", flag = "esp_distance_enemy_color", visible = false, conditional = true, color = amethyst['Esp']['Distance']['Colors']['Enemy'], callback = function(c) amethyst['Esp']['Distance']['Colors']['Enemy'] = c esp_refresh() end })
+    :colorpicker({ name = "Priority", flag = "esp_distance_priority_color", visible = false, conditional = true, color = amethyst['Esp']['Distance']['Colors']['Priority'], callback = function(c) amethyst['Esp']['Distance']['Colors']['Priority'] = c esp_refresh() end })
+    :colorpicker({ name = "Neutral", flag = "esp_distance_neutral_color", visible = false, conditional = true, color = amethyst['Esp']['Distance']['Colors']['Neutral'], callback = function(c) amethyst['Esp']['Distance']['Colors']['Neutral'] = c esp_refresh() end })
+    :colorpicker({ name = "Friendly", flag = "esp_distance_friendly_color", visible = false, conditional = true, color = amethyst['Esp']['Distance']['Colors']['Friendly'], callback = function(c) amethyst['Esp']['Distance']['Colors']['Friendly'] = c esp_refresh() end })
+    section:toggle({ name = "Weapon", flag = "Weapon", default = amethyst['Esp']['Weapon']['Enabled'], callback = function(v) amethyst['Esp']['Weapon']['Enabled'] = v esp_refresh() end })
+    :colorpicker({ name = "Enemy", flag = "esp_weapon_enemy_color", visible = false, conditional = true, color = amethyst['Esp']['Weapon']['Colors']['Enemy'], callback = function(c) amethyst['Esp']['Weapon']['Colors']['Enemy'] = c esp_refresh() end })
+    :colorpicker({ name = "Priority", flag = "esp_weapon_priority_color", visible = false, conditional = true, color = amethyst['Esp']['Weapon']['Colors']['Priority'], callback = function(c) amethyst['Esp']['Weapon']['Colors']['Priority'] = c esp_refresh() end })
+    :colorpicker({ name = "Neutral", flag = "esp_weapon_neutral_color", visible = false, conditional = true, color = amethyst['Esp']['Weapon']['Colors']['Neutral'], callback = function(c) amethyst['Esp']['Weapon']['Colors']['Neutral'] = c esp_refresh() end })
+    :colorpicker({ name = "Friendly", flag = "esp_weapon_friendly_color", visible = false, conditional = true, color = amethyst['Esp']['Weapon']['Colors']['Friendly'], callback = function(c) amethyst['Esp']['Weapon']['Colors']['Friendly'] = c esp_refresh() end })
+    section:toggle({ name = "Tracer", flag = "esp_tracer", default = amethyst['Esp']['Tracer']['Enabled'], callback = function(v) amethyst['Esp']['Tracer']['Enabled'] = v esp_refresh() end })
+    :colorpicker({ name = "Enemy", flag = "esp_tracer_enemy_color", visible = false, conditional = true, color = amethyst['Esp']['Tracer']['Colors']['Enemy'], callback = function(c) amethyst['Esp']['Tracer']['Colors']['Enemy'] = c esp_refresh() end })
+    :colorpicker({ name = "Priority", flag = "esp_tracer_priority_color", visible = false, conditional = true, color = amethyst['Esp']['Tracer']['Colors']['Priority'], callback = function(c) amethyst['Esp']['Tracer']['Colors']['Priority'] = c esp_refresh() end })
+    :colorpicker({ name = "Neutral", flag = "esp_tracer_neutral_color", visible = false, conditional = true, color = amethyst['Esp']['Tracer']['Colors']['Neutral'], callback = function(c) amethyst['Esp']['Tracer']['Colors']['Neutral'] = c esp_refresh() end })
+    :colorpicker({ name = "Friendly", flag = "esp_tracer_friendly_color", visible = false, conditional = true, color = amethyst['Esp']['Tracer']['Colors']['Friendly'], callback = function(c) amethyst['Esp']['Tracer']['Colors']['Friendly'] = c esp_refresh() end })
+    :dropdown({ name = "From", flag = "esp_tracer_from", items = { "Bottom", "Top" }, default = amethyst['Esp']['Tracer']['From'], callback = function(v) amethyst['Esp']['Tracer']['From'] = v esp_refresh() end })
+    task.defer(function()
+        local v = flags["esp_show"] or {}
+        for _, feat in ipairs({ "boxes", "filled", "names", "health", "distance", "weapon", "tracer" }) do
+            for _, p in ipairs({ "Enemy", "Priority", "Neutral", "Friendly" }) do
+                local flag = "esp_" .. feat .. "_" .. p:lower() .. "_color"
+                if visible_flags[flag] then
+                    local found = false
+                    for _, s in ipairs(v) do if s == p then found = true break end end
+                    visible_flags[flag](found)
+                end
+            end
+        end
+    end)
 end
 
 if is_hood_customs then
@@ -276,7 +372,7 @@ if is_hood_customs then
     end
 
     ab:toggle({ name = "Enabled", flag = "ab_enabled", default = amethyst['Aimbot']['Enabled'], callback = function(v) amethyst['Aimbot']['Enabled'] = v end }):keybind({ flag = "ab_key", mode = "hold", name = "Aimbot" })
-    ab:dropdown({ name = "Method", flag = "ab_method", items = { "Camera", "Mouse" }, default = amethyst['Aimbot']['Method'], callback = function(v) amethyst['Aimbot']['Method'] = v end })
+    ab:dropdown({ name = "Method", flag = "ab_method", items = { "Camera", "Mouse" }, default = amethyst['Aimbot']['Method'], risky_values = { "Camera" }, callback = function(v) amethyst['Aimbot']['Method'] = v end })
     ab:dropdown({ name = "FOV Type", flag = "ab_fov_type", items = { "Circle", "Box" }, default = amethyst['Aimbot']['FOVType'], callback = function(v) amethyst['Aimbot']['FOVType'] = v ab_fov_vis(v) end })
     ab:slider({ name = "FOV", flag = "ab_fov", min = 1, max = 800, default = amethyst['Aimbot']['FOV'], interval = 1, callback = function(v) amethyst['Aimbot']['FOV'] = v end })
     ab:slider({ name = "FOV Width", flag = "ab_fov_w", min = 0.1, max = 10, default = amethyst['Aimbot']['FOVBox'][1], interval = 0.1, callback = function(v) amethyst['Aimbot']['FOVBox'][1] = v end })
@@ -305,8 +401,8 @@ if is_hood_customs then
         if visible_flags['hc_sa_fov_h']    then visible_flags['hc_sa_fov_h'](box)     end
     end
 
-    sil:toggle({ name = "Enabled", flag = "hc_sa_enabled", default = hc_silent['Enabled'], callback = function(v) hc_silent['Enabled'] = v end }):keybind({ flag = "hc_sa_key", mode = "always", name = "Silent Aim" })
-    sil:toggle({ name = "Client Bullet", flag = "hc_sa_client_bullet", default = hc_silent['Client Bullet'], callback = function(v) hc_silent['Client Bullet'] = v end })
+    sil:toggle({ name = "Enabled", flag = "hc_sa_enabled", default = hc_silent['Enabled'], callback = function(v) hc_silent['Enabled'] = v end, risky = true, tooltip = "bypasses aimview" }):keybind({ flag = "hc_sa_key", mode = "always", name = "Silent Aim" })
+    sil:toggle({ name = "Client Bullet", flag = "hc_sa_client_bullet", default = hc_silent['Client Bullet'], callback = function(v) hc_silent['Client Bullet'] = v end, risky = true, tooltip = "little buggy" })
     sil:toggle({ name = "FOV", flag = "hc_sa_fov", default = hc_silent['FOV']['Enabled'], callback = function(v) hc_silent['FOV']['Enabled'] = v end })
     sil:dropdown({ name = "FOV Type", flag = "hc_sa_fov_type", items = { "Circle", "Box" }, default = hc_silent['FOV']['Type'], callback = function(v) hc_silent['FOV']['Type'] = v sa_fov_vis(v) end })
     sil:slider({ name = "Size", flag = "hc_sa_fov_size", min = 1, max = 800, default = hc_silent['FOV']['Size'], interval = 1, callback = function(v) hc_silent['FOV']['Size'] = v end })
@@ -314,7 +410,7 @@ if is_hood_customs then
     sil:slider({ name = "Height", flag = "hc_sa_fov_h", min = 0.1, max = 10, default = hc_silent['FOV']['Box'][2], interval = 0.1, callback = function(v) hc_silent['FOV']['Box'][2] = v end })
     sa_fov_vis(hc_silent['FOV']['Type'])
     sil:slider({ name = "Multipoint", flag = "hc_sa_closest_point", min = 0, max = 100, default = hc_silent['Multipoint'], interval = 1, suffix = "%", callback = function(v) hc_silent['Multipoint'] = v end })
-    sil:slider({ name = "Shotgun Spread", flag = "hc_sa_shotgun_spread", min = 0, max = 100, default = hc_silent['Spread']['ShotgunSpread'], interval = 1, suffix = "%", callback = function(v) hc_silent['Spread']['ShotgunSpread'] = v end })
+    sil:slider({ name = "Shotgun Spread", flag = "hc_sa_shotgun_spread", min = 0, max = 100, default = hc_silent['Spread']['ShotgunSpread'], interval = 1, suffix = "%", callback = function(v) hc_silent['Spread']['ShotgunSpread'] = v end, risky = true })
     sil:dropdown({ name = "Filters", flag = "hc_sa_filters", items = { "Ignore Dead", "Ignore Grabbed", "Check FF", "Wall Check" }, multi = true, default = {}, callback = function(v)
         local ch = amethyst['HCSaChecks']
         ch['IgnoreDead'] = false ch['IgnoreGrabbed'] = false ch['CheckForceField'] = false ch['WallCheck'] = false
@@ -344,19 +440,34 @@ if is_hood_customs then
     end })
 
     local col = VIS:column()
-    local esp_sec, misc_sec = col:multi_section({ names = { "ESP", "Misc" } })
+    local esp_sub, misc_sub = col:multi_section({ names = { "ESP", "Misc" } })
 
-    build_esp_ui(esp_sec)
+    build_esp_ui(esp_sub)
+    esp_sub:dropdown({ name = "Filters", flag = "hc_esp_filters", items = { "Ignore Dead", "Ignore Grabbed" }, multi = true, scrolling = true, default = {}, callback = esp_refresh })
+
     if not esp_preview_obj then esp_preview_obj = window.esp_section:esp_preview({}) end
-    esp_sec:toggle({ name = "Ignore Dead",    flag = "hc_esp_ignore_dead",    default = false })
-    esp_sec:toggle({ name = "Ignore Grabbed", flag = "hc_esp_ignore_grabbed", default = false })
-    esp_sec:toggle({ name = "Wall Check",     flag = "hc_esp_wallcheck",      default = false })
+    window.esp_section:dropdown({ name = "Priority", flag = "esp_preview_priority", items = { "Enemy", "Priority", "Neutral", "Friendly" }, default = amethyst['Esp']['PreviewPriority'], callback = function(v) amethyst['Esp']['PreviewPriority'] = v esp_refresh() end })
 
-    misc_sec:toggle({ name = "Tracer", flag = "hc_tracer_enabled", default = hc_silent['Tracer']['Enabled'], callback = function(v) hc_silent['Tracer']['Enabled'] = v end })
+    misc_sub:toggle({ name = "World", flag = "world_enabled", default = amethyst['World']['Enabled'], callback = function(v) amethyst['World']['Enabled'] = v end, risky = true })
+    misc_sub:toggle({ name = "Fog", flag = "world_fog", default = amethyst['World']['Fog']['Enabled'], callback = function(v) amethyst['World']['Fog']['Enabled'] = v end, risky = true })
+    :colorpicker({ name = "Color", flag = "world_fog_color", color = amethyst['World']['Fog']['Color'], callback = function(c) amethyst['World']['Fog']['Color'] = c end })
+    misc_sub:slider({ name = "Fog Start", flag = "world_fog_start", min = 1, max = 10000, default = amethyst['World']['Fog']['Start'], interval = 1, callback = function(v) amethyst['World']['Fog']['Start'] = v end, risky = true })
+    misc_sub:slider({ name = "Fog End", flag = "world_fog_end", min = 1, max = 10000, default = amethyst['World']['Fog']['End'], interval = 1, callback = function(v) amethyst['World']['Fog']['End'] = v end, risky = true })
+    misc_sub:toggle({ name = "Ambient", flag = "world_ambient", default = amethyst['World']['Ambient']['Enabled'], callback = function(v) amethyst['World']['Ambient']['Enabled'] = v end, risky = true })
+    :colorpicker({ name = "Color", flag = "world_ambient_color", color = amethyst['World']['Ambient']['Color'], callback = function(c) amethyst['World']['Ambient']['Color'] = c end })
+    misc_sub:toggle({ name = "Brightness", flag = "world_brightness", default = amethyst['World']['Brightness']['Enabled'], callback = function(v) amethyst['World']['Brightness']['Enabled'] = v end, risky = true })
+    misc_sub:slider({ name = "Value", flag = "world_brightness_val", min = 0, max = 10, default = amethyst['World']['Brightness']['Value'], interval = 0.1, callback = function(v) amethyst['World']['Brightness']['Value'] = v end, risky = true })
+    misc_sub:toggle({ name = "Clock Time", flag = "world_clock", default = amethyst['World']['ClockTime']['Enabled'], callback = function(v) amethyst['World']['ClockTime']['Enabled'] = v end, risky = true })
+    misc_sub:slider({ name = "Time", flag = "world_clock_val", min = 0, max = 24, default = amethyst['World']['ClockTime']['Value'], interval = 0.1, callback = function(v) amethyst['World']['ClockTime']['Value'] = v end, risky = true })
+    misc_sub:toggle({ name = "Exposure", flag = "world_exposure", default = amethyst['World']['WorldExposure']['Enabled'], callback = function(v) amethyst['World']['WorldExposure']['Enabled'] = v end, risky = true })
+    misc_sub:slider({ name = "Value", flag = "world_exposure_val", min = -3, max = 3, default = amethyst['World']['WorldExposure']['Value'], interval = 0.1, callback = function(v) amethyst['World']['WorldExposure']['Value'] = v end, risky = true })
+    misc_sub:toggle({ name = "Skybox", flag = "skybox_enabled", default = amethyst['Skyboxes']['Enabled'], callback = function(v) amethyst['Skyboxes']['Enabled'] = v end, risky = true })
+    misc_sub:dropdown({ name = "Skybox", flag = "skybox_selected", items = { "None", "Dark Sky", "Art Mountain", "Vaporwave", "Nebula", "Twilight", "Lake Sky", "Alien Red", "Black Mesa", "Clouds", "Kor" }, default = amethyst['Skyboxes']['Selected'], callback = function(v) amethyst['Skyboxes']['Selected'] = v end, risky = true })
+    misc_sub:toggle({ name = "Tracer", flag = "hc_tracer_enabled", default = hc_silent['Tracer']['Enabled'], callback = function(v) hc_silent['Tracer']['Enabled'] = v end })
     :colorpicker({ name = "Color", color = hc_silent['Tracer']['Outline']['Color'], flag = "hc_tracer_outline_color", callback = function(c) hc_silent['Tracer']['Outline']['Color'] = c end })
-    misc_sec:slider({ name = "Thickness", flag = "hc_tracer_thickness", min = 1, max = 5, default = hc_silent['Tracer']['Thickness'], interval = 1, callback = function(v) hc_silent['Tracer']['Thickness'] = v end })
-    misc_sec:toggle({ name = "Distance", flag = "hc_dist_enabled", default = hc_silent['Distance']['Enabled'], callback = function(v) hc_silent['Distance']['Enabled'] = v end })
-    misc_sec:toggle({ name = "FOV", flag = "hc_fov_vis", default = hc_silent['FOV']['Visible'], callback = function(v) hc_silent['FOV']['Visible'] = v end })
+    misc_sub:slider({ name = "Thickness", flag = "hc_tracer_thickness", min = 1, max = 5, default = hc_silent['Tracer']['Thickness'], interval = 1, callback = function(v) hc_silent['Tracer']['Thickness'] = v end })
+    misc_sub:toggle({ name = "Distance", flag = "hc_dist_enabled", default = hc_silent['Distance']['Enabled'], callback = function(v) hc_silent['Distance']['Enabled'] = v end })
+    misc_sub:toggle({ name = "FOV", flag = "hc_fov_vis", default = hc_silent['FOV']['Visible'], callback = function(v) hc_silent['FOV']['Visible'] = v end })
     :colorpicker({ name = "Default", color = hc_silent['FOV']['Color'], flag = "hc_fov_color", callback = function(c) hc_silent['FOV']['Color'] = c end })
     :colorpicker({ name = "Focused", color = hc_silent['FOV']['FocusedColor'], flag = "hc_fov_focused", callback = function(c) hc_silent['FOV']['FocusedColor'] = c end })
 
@@ -432,6 +543,10 @@ if is_hood_customs then
             local be = char and char:FindFirstChild("BodyEffects")
             return be and be:FindFirstChild("K.O") and be["K.O"].Value or false
         end
+        local function sa_is_reloading(char)
+            local be = char and char:FindFirstChild("BodyEffects")
+            return be and be:FindFirstChild("Reloading") and be["Reloading"].Value or false
+        end
         local function sa_is_grabbed(char)   return char and char:FindFirstChild("GRABBING_CONSTRAINT") ~= nil end
         local function sa_has_ff(char)       return char and char:FindFirstChild("Forcefield") ~= nil end
 
@@ -493,11 +608,13 @@ if is_hood_customs then
         local function sa_get_target()
             local fov   = hc_silent['FOV']
             local mouse = sa_mpos()
-            local limit = fov['Enabled'] and fov['Size'] or math.huge
+            local base_limit = fov['Enabled'] and fov['Size'] or math.huge
             local my_char = lp.Character
             local closest, min_d = nil, math.huge
             for _, player in ipairs(players:GetPlayers()) do
                 if player == lp then continue end
+                local pri = library.get_priority and library.get_priority(player) or "Neutral"
+                if pri == "Friendly" then continue end
                 local char = player.Character
                 if not char or not char:FindFirstChild("HumanoidRootPart") then continue end
                 if amethyst['HCSaChecks']['CheckForceField'] and sa_has_ff(char) then continue end
@@ -505,13 +622,15 @@ if is_hood_customs then
                 if amethyst['HCSaChecks']['IgnoreGrabbed'] and sa_is_grabbed(char) then continue end
                 if amethyst['HCSaChecks']['IgnoreDead']    and sa_is_knocked(my_char) then continue end
                 if amethyst['HCSaChecks']['IgnoreGrabbed'] and sa_is_grabbed(my_char) then continue end
+                local bonus = (pri == "Priority" and 15) or (pri == "Enemy" and 10) or 0
+                local limit = base_limit + bonus
                 for _, part in ipairs(char:GetChildren()) do
                     if not part:IsA("BasePart") or part.Transparency >= 0.5 then continue end
                     local sp, on_screen = camera:WorldToViewportPoint(part.Position)
                     if not on_screen then continue end
                     local d = (Vector2.new(sp.X, sp.Y) - mouse).Magnitude
                     if d >= limit then continue end
-                    if not sa_raycast(part, camera.CFrame.Position, {my_char}) then continue end
+                    if amethyst['HCSaChecks']['WallCheck'] and not sa_raycast(part, camera.CFrame.Position, {my_char}) then continue end
                     if d < min_d then min_d = d closest = player end
                 end
             end
@@ -554,10 +673,9 @@ if is_hood_customs then
             if fov['Type'] == 'Box' then
                 local char = sa_target and sa_target.Character
                 local hrp = char and char:FindFirstChild("HumanoidRootPart")
-                if not hrp then sa_box_focused = false return end
                 local nearest = char and sa_get_closest_to_cursor(char)
+                if not hrp or not nearest then sa_box_focused = false return end
                 if amethyst['HCSaChecks']['WallCheck'] then
-                    if not nearest then sa_box_focused = false return end
                     local filter = {}
                     if lp.Character then filter[#filter + 1] = lp.Character end
                     filter[#filter + 1] = camera
@@ -567,11 +685,11 @@ if is_hood_customs then
                         sa_box_focused = false return
                     end
                 end
-                local sp, visible = camera:WorldToViewportPoint(hrp.Position)
-                if not visible then sa_box_focused = false return end
-                local scale = (hrp.Size.Y * camera.ViewportSize.Y) / (sp.Z * 2) * 80 / camera.FieldOfView
+                local hrp_sp, hrp_visible = camera:WorldToViewportPoint(hrp.Position)
+                if not hrp_visible then sa_box_focused = false return end
+                local scale = (hrp.Size.Y * camera.ViewportSize.Y) / (hrp_sp.Z * 2) * 80 / camera.FieldOfView
                 local bw, bh = fov['Box'][1] * scale, fov['Box'][2] * scale
-                local bx, by = sp.X - bw / 2, sp.Y - bh / 2
+                local bx, by = hrp_sp.X - bw / 2, hrp_sp.Y - bh / 2
                 sa_box_focused = mouse.X >= bx and mouse.X <= bx + bw and mouse.Y >= by and mouse.Y <= by + bh
                 fov_box.Size       = UDim2.fromOffset(bw, bh)
                 fov_box.Position   = UDim2.fromOffset(bx, by)
@@ -595,6 +713,17 @@ if is_hood_customs then
         local function sa_hp_color(pct)
             local t = math.clamp(pct, 0, 1)
             return t < 0.5 and Color3.new(1, t * 2, 0) or Color3.new(2 - t * 2, 1, 0)
+        end
+
+        local function clamp_ray_to_viewport(from, dir)
+            local vw, vh = camera.ViewportSize.X, camera.ViewportSize.Y
+            local t = math.huge
+            if dir.X > 0.0001 then t = math.min(t, (vw - from.X) / dir.X)
+            elseif dir.X < -0.0001 then t = math.min(t, -from.X / dir.X) end
+            if dir.Y > 0.0001 then t = math.min(t, (vh - from.Y) / dir.Y)
+            elseif dir.Y < -0.0001 then t = math.min(t, -from.Y / dir.Y) end
+            if t < 0 or t == math.huge then t = 5000 end
+            return from + dir * t
         end
 
         local function sa_update_tracer()
@@ -671,36 +800,102 @@ if is_hood_customs then
             return (cfg.Factor or 1) * (1 + (t ^ 2.2) * (cfg.DistanceScale or 1) * 3)
         end
 
+        local function sa_get_fake_beam_end(origin, real_distance, pellet_idx, server_time, stored_cursor_pt)
+            local cursor_pt = stored_cursor_pt
+            if not cursor_pt then
+                if Mouse.Target then
+                    cursor_pt = Mouse.Hit.Position
+                else
+                    local cf = camera.CFrame
+                    local plane_pt = cf.Position + cf.LookVector * 60
+                    local ray_origin, ray_dir = camera:ViewportPointToRay(uis:GetMouseLocation().X, uis:GetMouseLocation().Y)
+                    local denom = ray_dir:Dot(cf.LookVector)
+                    if math.abs(denom) > 0.0001 then
+                        local t = (plane_pt - ray_origin):Dot(cf.LookVector) / denom
+                        cursor_pt = ray_origin + ray_dir * t
+                    else
+                        cursor_pt = ray_origin + ray_dir * 1000
+                    end
+                end
+            end
+            local mouse_dir = (cursor_pt - origin).Unit
+            local tool = lp.Character and lp.Character:FindFirstChildOfClass("Tool")
+            local is_shotgun = false
+            if tool then
+                local gd = tool:FindFirstChild("GunData")
+                if gd then
+                    local ok, data = pcall(require, gd)
+                    if ok and data and data.is_shotgun then is_shotgun = true end
+                end
+            end
+            local spread_mul = sa_get_spread_mul(real_distance)
+            local unit
+            if is_shotgun and spread_mul > 0 then
+                local spread_patterns = {-1.35, -0.9, 0.25, 0.55, 1}
+                local rng = Random.new(server_time)
+                local random_angle_z = rng:NextNumber(-90, 90)
+                local z_rot = CFrame.Angles(0, 0, math.rad(random_angle_z))
+                local spread_intensity = rng:NextNumber(0, 5.75)
+                local sign = rng:NextInteger(0, 1) == 1 and 1 or -1
+                spread_intensity = spread_intensity * sign
+                if spread_intensity > -0.35 and spread_intensity < 0.35 then
+                    spread_intensity = 0.35 * sign
+                end
+                local sg_mod = (hc_silent['Spread']['ShotgunSpread'] or 100) / 100
+                spread_intensity = spread_intensity * sg_mod
+                local desired_hit = origin + mouse_dir * 1000
+                local base_cf = CFrame.new(origin, desired_hit)
+                local pattern = spread_patterns[pellet_idx] or 0
+                unit = (base_cf * z_rot * CFrame.Angles(math.rad(pattern * spread_intensity), 0, 0)).LookVector
+            else
+                unit = mouse_dir
+            end
+            return origin + unit * real_distance
+        end
+
         local function sa_draw_client_tracer(origin, hit_pos, src)
             local p0 = Instance.new("Part")
             p0.Anchored = true p0.CanCollide = false p0.Transparency = 1
-            p0.Size = Vector3.new(0.1, 0.1, 0.1) p0.CFrame = CFrame.new(origin) p0.Parent = workspace
+            p0.Size = Vector3.new(0.1, 0.1, 0.1) p0.CFrame = CFrame.new(origin) p0.Parent = ws
             local p1 = Instance.new("Part")
             p1.Anchored = true p1.CanCollide = false p1.Transparency = 1
-            p1.Size = Vector3.new(0.1, 0.1, 0.1) p1.CFrame = CFrame.new(hit_pos) p1.Parent = workspace
+            p1.Size = Vector3.new(0.1, 0.1, 0.1) p1.CFrame = CFrame.new(hit_pos) p1.Parent = ws
             local beam = Instance.new("Beam")
             beam:SetAttribute("ClientTracer", true)
             beam.Attachment0 = Instance.new("Attachment", p0)
             beam.Attachment1 = Instance.new("Attachment", p1)
-            beam.Width0 = src.Width0; beam.Width1 = src.Width1
-            beam.Color = src.Color; beam.Texture = src.Texture
+            beam.Width0 = src.Width0 beam.Width1 = src.Width1
+            beam.Color = src.Color beam.Texture = src.Texture
             beam.LightEmission = src.LightEmission
-            beam.Segments = src.Segments; beam.FaceCamera = true
+            beam.Segments = src.Segments beam.FaceCamera = true
             beam.Parent = p0
-            local hb; hb = run.Heartbeat:Connect(function()
+            local hb
+            hb = run.Heartbeat:Connect(function()
                 if not src.Parent then hb:Disconnect() return end
                 beam.Color = src.Color
             end)
             task.delay(0.25, function() hb:Disconnect() p0:Destroy() p1:Destroy() end)
         end
 
+        local sa_muzzle_ray_params = RaycastParams.new()
+        sa_muzzle_ray_params.FilterType = Enum.RaycastFilterType.Exclude
+
+        local function sa_raycast_muzzle(origin, target_pos)
+            sa_muzzle_ray_params.FilterDescendantsInstances = { lp.Character, camera }
+            local dir = (target_pos - origin).Unit * 2000
+            return workspace:Raycast(origin, dir, sa_muzzle_ray_params)
+        end
+
         local function sa_create_args(root)
-            if not sa_target or not sa_target.Character or not root then return end
-            local char        = sa_target.Character
-            local part        = sa_get_closest_to_cursor(char)
+            if not root then return end
+            local char = sa_target and sa_target.Character
+            if not char then return end
+            local part = sa_get_closest_to_cursor(char)
             if not part then return end
             local desired_hit = sa_get_hit_pos()
             if not desired_hit then return end
+            local center_result = sa_raycast_muzzle(root.Position, desired_hit)
+            desired_hit = center_result and center_result.Position or desired_hit
             local distance    = (root.Position - desired_hit).Magnitude
             local spread_mul  = sa_get_spread_mul(distance)
             local is_shotgun  = false
@@ -713,7 +908,6 @@ if is_hood_customs then
                 end
             end
             local rc, parts = {}, {}
-            local normal = (root.Position - desired_hit).Unit
             local spread_patterns = {-1.35, -0.9, 0.25, 0.55, 1}
             local server_time = workspace:GetServerTimeNow()
             local rng = Random.new(server_time)
@@ -729,22 +923,21 @@ if is_hood_customs then
             if is_shotgun then
                 local sg_mod = (hc_silent['Spread']['ShotgunSpread'] or 100) / 100
                 spread_intensity = spread_intensity * sg_mod
+                spread_mul = math.max(spread_mul, 1)
             end
             local base_cf = CFrame.new(root.Position, desired_hit)
             local dist_to_target = (desired_hit - root.Position).Magnitude
-            local ray_params = RaycastParams.new()
-            ray_params.FilterType = Enum.RaycastFilterType.Include
-            ray_params.FilterDescendantsInstances = {char}
             for i = 1, 5 do
                 local world_hit = desired_hit
-                if is_shotgun and spread_mul > 0 then
+                if is_shotgun then
                     local pattern = spread_patterns[i] or 0
                     local unit = (base_cf * z_rot * CFrame.Angles(math.rad(pattern * spread_intensity), 0, 0)).LookVector
                     world_hit = root.Position + (unit * dist_to_target)
                 end
-                local result  = workspace:Raycast(root.Position, world_hit - root.Position, ray_params)
-                local hit_part = result and result.Instance or nil
+                local result = sa_raycast_muzzle(root.Position, world_hit)
                 local final_pos = result and result.Position or world_hit
+                local hit_part = char and result and result.Instance and result.Instance:IsDescendantOf(char) and result.Instance or nil
+                local normal = (root.Position - final_pos).Unit
                 rc[i] = { Normal = normal, Instance = hit_part, Position = final_pos }
                 parts[i] = {
                     thePart   = hit_part,
@@ -753,8 +946,23 @@ if is_hood_customs then
             end
             local positions = {}
             for i = 1, 5 do positions[i] = rc[i].Position end
-            sa_last_shot_pos = { origin = root.Position, positions = positions }
-            return {"Shoot", {rc, parts, root.Position, root.Position, workspace:GetServerTimeNow()}}
+            local cursor_pt
+            if Mouse.Target then
+                cursor_pt = Mouse.Hit.Position
+            else
+                local cf = camera.CFrame
+                local plane_pt = cf.Position + cf.LookVector * 60
+                local ray_origin, ray_dir = camera:ViewportPointToRay(uis:GetMouseLocation().X, uis:GetMouseLocation().Y)
+                local denom = ray_dir:Dot(cf.LookVector)
+                if math.abs(denom) > 0.0001 then
+                    local t = (plane_pt - ray_origin):Dot(cf.LookVector) / denom
+                    cursor_pt = ray_origin + ray_dir * t
+                else
+                    cursor_pt = ray_origin + ray_dir * 1000
+                end
+            end
+            sa_last_shot_pos = { origin = root.Position, positions = positions, server_time = server_time, cursor_pt = cursor_pt }
+            return {"Shoot", {rc, parts, root.Position, root.Position, server_time}}
         end
 
         local sa_last_hit_effects = 0
@@ -774,9 +982,15 @@ if is_hood_customs then
                     sa_target = sa_get_target()
                     sa_should_shoot()
                 end
-                if not sa_can_shoot or not sa_target or not sa_target.Character then return end
                 local my_char = lp.Character
                 local root = my_char and my_char:FindFirstChild("HumanoidRootPart")
+                local tool = my_char and my_char:FindFirstChildOfClass("Tool")
+                local is_shotgun = false
+                if tool and tool:FindFirstChild("GunData") then
+                    local ok, data = pcall(require, tool:FindFirstChild("GunData"))
+                    if ok and data and data.is_shotgun then is_shotgun = true end
+                end
+                if not sa_can_shoot or not sa_target or not sa_target.Character then return end
                 local targ_hrp = sa_target.Character:FindFirstChild("HumanoidRootPart")
                 if not root or not targ_hrp then return end
                 local dist = (root.Position - targ_hrp.Position).Magnitude
@@ -786,7 +1000,9 @@ if is_hood_customs then
                     if fov['Type'] == 'Box' then
                         if not sa_box_focused then return end
                     else
-                        local sp = camera:WorldToViewportPoint(targ_hrp.Position)
+                        local nearest = sa_get_closest_to_cursor(sa_target.Character)
+                        if not nearest then return end
+                        local sp = camera:WorldToViewportPoint(nearest.Position)
                         if (Vector2.new(sp.X, sp.Y) - sa_mpos()).Magnitude >= fov['Size'] then return end
                     end
                 end
@@ -821,7 +1037,7 @@ if is_hood_customs then
                 if not sa_args then return end
                 main_event:FireServer(unpack(sa_args))
                 task.delay(0.3, function() sa_last_shot_pos = nil end)
-                if not sa_cursor_on_target(targ_hrp) then
+                if not sa_cursor_on_target(targ_hrp) or hc_silent['Client Bullet'] then
                     local can_spawn_effects = true
                     local script_obj = tool:FindFirstChild("Script")
                     if script_obj then
@@ -833,7 +1049,7 @@ if is_hood_customs then
                             end
                         end
                     end
-                    if can_spawn_effects then
+                    if can_spawn_effects and not sa_is_reloading(my_char) then
                         local hit_cooldown = 0.4
                         local gun_data = tool:FindFirstChild("GunData")
                         if gun_data then
@@ -844,7 +1060,9 @@ if is_hood_customs then
                         if now - sa_last_hit_effects >= hit_cooldown then
                             sa_last_hit_effects = now
                             for i = 1, #sa_args[2][1] do
-                                sa_spawn_hit_effects(sa_args[2][1][i].Position)
+                                if sa_args[2][1][i].Instance then
+                                    sa_spawn_hit_effects(sa_args[2][1][i].Position)
+                                end
                             end
                         end
                     end
@@ -883,7 +1101,7 @@ if is_hood_customs then
         library:connection(run.PreRender, hide_all_beams)
         library:connection(workspace.DescendantAdded, function(obj)
             if not obj:IsA("Beam") or obj:GetAttribute("ClientTracer") then return end
-            if not sa_last_shot_pos or hc_silent['Client Bullet'] then return end
+            if not sa_last_shot_pos then return end
             task.spawn(function()
                 obj.Transparency = NumberSequence.new(1)
                 table.insert(hidden_beams, { beam = obj, frameCount = false })
@@ -893,9 +1111,18 @@ if is_hood_customs then
                 if not a0 then return end
                 if (a0.WorldPosition - sa_last_shot_pos.origin).Magnitude > 8 then return end
                 pellet_index = (pellet_index % 5) + 1
-                local hit_pos = sa_last_shot_pos.positions[pellet_index]
+                local origin = a0.WorldPosition
+                local target_pos = sa_last_shot_pos.positions[pellet_index]
+                if not target_pos then return end
+                local distance_to_target = (origin - target_pos).Magnitude
+                local hit_pos
+                if hc_silent['Client Bullet'] then
+                    hit_pos = sa_get_fake_beam_end(origin, distance_to_target, pellet_index, sa_last_shot_pos.server_time or workspace:GetServerTimeNow(), sa_last_shot_pos.cursor_pt)
+                else
+                    hit_pos = target_pos
+                end
                 if not hit_pos then return end
-                sa_draw_client_tracer(a0.WorldPosition, hit_pos, obj)
+                sa_draw_client_tracer(origin, hit_pos, obj)
             end)
         end)
 
@@ -986,7 +1213,7 @@ else
         ab:toggle({ name = "Enabled", flag = "ab_enabled", default = amethyst['Aimbot']['Enabled'], callback = function(v)
             amethyst['Aimbot']['Enabled'] = v
         end }):keybind({ flag = "ab_key", mode = "hold", name = "Aimbot" })
-        ab:dropdown({ name = "Method", flag = "ab_method", items = { "Camera", "Mouse" }, default = amethyst['Aimbot']['Method'], callback = function(v) amethyst['Aimbot']['Method'] = v end })
+        ab:dropdown({ name = "Method", flag = "ab_method", items = { "Camera", "Mouse" }, default = amethyst['Aimbot']['Method'], risky_values = { "Camera" }, callback = function(v) amethyst['Aimbot']['Method'] = v end })
         ab:slider({ name = "FOV", flag = "ab_fov", min = 1, max = 800, default = amethyst['Aimbot']['FOV'], interval = 1, callback = function(v)
             amethyst['Aimbot']['FOV'] = v
         end })
@@ -1040,8 +1267,35 @@ else
     local Visuals = window:tab({ name = "Visuals" })
     do
         local col = Visuals:column()
-        build_esp_ui(col:section({ name = "ESP" }))
-        if not esp_preview_obj then esp_preview_obj = window.esp_section:esp_preview({}) end
+        local esp_sub, misc_sub = col:multi_section({ names = { "ESP", "Misc" } })
+        build_esp_ui(esp_sub)
+        esp_sub:dropdown({ name = "Filters", flag = "hc_esp_filters", items = { "Ignore Dead", "Ignore Grabbed" }, multi = true, scrolling = true, default = {}, callback = esp_refresh })
+        if window.esp_section then
+            if not esp_preview_obj then esp_preview_obj = window.esp_section:esp_preview({}) end
+            window.esp_section:dropdown({ name = "Priority", flag = "esp_preview_priority", items = { "Enemy", "Priority", "Neutral", "Friendly" }, default = amethyst['Esp']['PreviewPriority'], callback = function(v) amethyst['Esp']['PreviewPriority'] = v esp_refresh() end })
+        end
+        misc_sub:toggle({ name = "World", flag = "world_enabled", default = amethyst['World']['Enabled'], callback = function(v) amethyst['World']['Enabled'] = v end, risky = true })
+        misc_sub:toggle({ name = "Fog", flag = "world_fog", default = amethyst['World']['Fog']['Enabled'], callback = function(v) amethyst['World']['Fog']['Enabled'] = v end, risky = true })
+        :colorpicker({ name = "Color", flag = "world_fog_color", color = amethyst['World']['Fog']['Color'], callback = function(c) amethyst['World']['Fog']['Color'] = c end })
+        misc_sub:slider({ name = "Fog Start", flag = "world_fog_start", min = 1, max = 10000, default = amethyst['World']['Fog']['Start'], interval = 1, callback = function(v) amethyst['World']['Fog']['Start'] = v end, risky = true })
+        misc_sub:slider({ name = "Fog End", flag = "world_fog_end", min = 1, max = 10000, default = amethyst['World']['Fog']['End'], interval = 1, callback = function(v) amethyst['World']['Fog']['End'] = v end, risky = true })
+        misc_sub:toggle({ name = "Ambient", flag = "world_ambient", default = amethyst['World']['Ambient']['Enabled'], callback = function(v) amethyst['World']['Ambient']['Enabled'] = v end, risky = true })
+        :colorpicker({ name = "Color", flag = "world_ambient_color", color = amethyst['World']['Ambient']['Color'], callback = function(c) amethyst['World']['Ambient']['Color'] = c end })
+        misc_sub:toggle({ name = "Brightness", flag = "world_brightness", default = amethyst['World']['Brightness']['Enabled'], callback = function(v) amethyst['World']['Brightness']['Enabled'] = v end, risky = true })
+        misc_sub:slider({ name = "Value", flag = "world_brightness_val", min = 0, max = 10, default = amethyst['World']['Brightness']['Value'], interval = 0.1, callback = function(v) amethyst['World']['Brightness']['Value'] = v end, risky = true })
+        misc_sub:toggle({ name = "Clock Time", flag = "world_clock", default = amethyst['World']['ClockTime']['Enabled'], callback = function(v) amethyst['World']['ClockTime']['Enabled'] = v end, risky = true })
+        misc_sub:slider({ name = "Time", flag = "world_clock_val", min = 0, max = 24, default = amethyst['World']['ClockTime']['Value'], interval = 0.1, callback = function(v) amethyst['World']['ClockTime']['Value'] = v end, risky = true })
+        misc_sub:toggle({ name = "Exposure", flag = "world_exposure", default = amethyst['World']['WorldExposure']['Enabled'], callback = function(v) amethyst['World']['WorldExposure']['Enabled'] = v end, risky = true })
+        misc_sub:slider({ name = "Value", flag = "world_exposure_val", min = -3, max = 3, default = amethyst['World']['WorldExposure']['Value'], interval = 0.1, callback = function(v) amethyst['World']['WorldExposure']['Value'] = v end, risky = true })
+        misc_sub:toggle({ name = "Skybox", flag = "skybox_enabled", default = amethyst['Skyboxes']['Enabled'], callback = function(v) amethyst['Skyboxes']['Enabled'] = v end, risky = true })
+        misc_sub:dropdown({ name = "Skybox", flag = "skybox_selected", items = { "None", "Dark Sky", "Art Mountain", "Vaporwave", "Nebula", "Twilight", "Lake Sky", "Alien Red", "Black Mesa", "Clouds", "Kor" }, default = amethyst['Skyboxes']['Selected'], callback = function(v) amethyst['Skyboxes']['Selected'] = v end, risky = true })
+        misc_sub:toggle({ name = "Tracer", flag = "hc_tracer_enabled", default = hc_silent['Tracer']['Enabled'], callback = function(v) hc_silent['Tracer']['Enabled'] = v end })
+        :colorpicker({ name = "Color", color = hc_silent['Tracer']['Outline']['Color'], flag = "hc_tracer_outline_color", callback = function(c) hc_silent['Tracer']['Outline']['Color'] = c end })
+        misc_sub:slider({ name = "Thickness", flag = "hc_tracer_thickness", min = 1, max = 5, default = hc_silent['Tracer']['Thickness'], interval = 1, callback = function(v) hc_silent['Tracer']['Thickness'] = v end })
+        misc_sub:toggle({ name = "Distance", flag = "hc_dist_enabled", default = hc_silent['Distance']['Enabled'], callback = function(v) hc_silent['Distance']['Enabled'] = v end })
+        misc_sub:toggle({ name = "FOV", flag = "hc_fov_vis", default = hc_silent['FOV']['Visible'], callback = function(v) hc_silent['FOV']['Visible'] = v end })
+        :colorpicker({ name = "Default", color = hc_silent['FOV']['Color'], flag = "hc_fov_color", callback = function(c) hc_silent['FOV']['Color'] = c end })
+        :colorpicker({ name = "Focused", color = hc_silent['FOV']['FocusedColor'], flag = "hc_fov_focused", callback = function(c) hc_silent['FOV']['FocusedColor'] = c end })
     end
 
     Aiming.open_tab()
@@ -1229,43 +1483,46 @@ local esp_drawings = {}
 local function esp_make_line()
     local l = Drawing.new("Line")
     l.Thickness = 1
-    l.Visible   = false
+    l.Visible = false
     return l
 end
 
 local function esp_make_text()
     local t = Drawing.new("Text")
-    t.Size         = 13
-    t.Font         = Drawing.Fonts.UI
-    t.Outline      = true
+    t.Size = 13
+    t.Font = Drawing.Fonts.UI
+    t.Outline = true
     t.OutlineColor = Color3.fromRGB(0, 0, 0)
-    t.Center       = true
-    t.Visible      = false
+    t.Center = true
+    t.Visible = false
     return t
 end
 
 local function esp_make_square()
     local s = Drawing.new("Square")
     s.Thickness = 1
-    s.Filled    = false
-    s.Visible   = false
+    s.Filled = false
+    s.Visible = false
     return s
 end
 
 local function esp_create(character)
     if esp_drawings[character] then return end
     local d = {
-        corners   = {},
-        box       = esp_make_square(),
-        hbar_bg   = esp_make_square(),
+        box = esp_make_square(),
+        box_fill = esp_make_square(),
+        tracer = esp_make_line(),
+        corners = {},
+        hbar_bg = esp_make_square(),
         hbar_fill = esp_make_square(),
-        name      = esp_make_text(),
-        distance  = esp_make_text(),
-        weapon    = esp_make_text(),
+        name = esp_make_text(),
+        distance = esp_make_text(),
+        weapon = esp_make_text(),
     }
-    for i = 1, 8 do d.corners[i] = esp_make_line() end
-    d.hbar_bg.Filled   = true
+    d.box_fill.Filled = true
+    d.hbar_bg.Filled = true
     d.hbar_fill.Filled = true
+    for i = 1, 8 do d.corners[i] = esp_make_line() end
     esp_drawings[character] = d
 end
 
@@ -1273,15 +1530,27 @@ local function esp_destroy(character)
     local d = esp_drawings[character]
     if not d then return end
     for _, l in ipairs(d.corners) do l:Remove() end
-    d.box:Remove(); d.hbar_bg:Remove(); d.hbar_fill:Remove()
-    d.name:Remove(); d.distance:Remove(); d.weapon:Remove()
+    d.box:Remove()
+    d.box_fill:Remove()
+    d.tracer:Remove()
+    d.hbar_bg:Remove()
+    d.hbar_fill:Remove()
+    d.name:Remove()
+    d.distance:Remove()
+    d.weapon:Remove()
     esp_drawings[character] = nil
 end
 
 local function esp_hide(d)
     for _, l in ipairs(d.corners) do l.Visible = false end
-    d.box.Visible = false; d.hbar_bg.Visible = false; d.hbar_fill.Visible = false
-    d.name.Visible = false; d.distance.Visible = false; d.weapon.Visible = false
+    d.box.Visible = false
+    d.box_fill.Visible = false
+    d.tracer.Visible = false
+    d.hbar_bg.Visible = false
+    d.hbar_fill.Visible = false
+    d.name.Visible = false
+    d.distance.Visible = false
+    d.weapon.Visible = false
 end
 
 local HP_BAR_BG_COLOR = Color3.fromRGB(30, 30, 30)
@@ -1291,10 +1560,6 @@ esp_ray_params.FilterType = Enum.RaycastFilterType.Exclude
 
 local m_max   = math.max
 local m_floor = math.floor
-
-local function fc(flag, r, g, b)
-    return (flags[flag] and flags[flag].Color) or Color3.fromRGB(r, g, b)
-end
 
 local function esp_get_bbox(entry)
     local char = entry.character
@@ -1387,35 +1652,22 @@ local function esp_update(d, entry)
     if not entry.humanoid then entry.humanoid = character:FindFirstChildOfClass("Humanoid") end
     local player_priority = (entry.player and library.get_priority(entry.player)) or "Neutral"
     local show_list = flags["esp_show"]
-    if show_list and type(show_list) == "table" and #show_list > 0 and #show_list < 4 then
+    if show_list and type(show_list) == "table" and #show_list > 0 then
         local ok = false
         for _, p in ipairs(show_list) do if p == player_priority then ok = true break end end
         if not ok then esp_hide(d) return end
     end
-    local priority_color
-    if player_priority == "Enemy" then
-        priority_color = flags["esp_enemy_color"] or Color3.fromRGB(255, 0, 0)
-    elseif player_priority == "Friendly" or player_priority == "Priority" then
-        priority_color = flags["esp_friendly_color"] or Color3.fromRGB(0, 255, 255)
-    end
     if is_hood_customs then
-        if flags["hc_esp_ignore_dead"] then
+        local filters = flags["hc_esp_filters"] or {}
+        if table.find(filters, "Ignore Dead") then
             local be = character:FindFirstChild("BodyEffects")
             if be then
                 local ko = be:FindFirstChild("K.O")
                 if ko and ko.Value then esp_hide(d) return end
             end
         end
-        if flags["hc_esp_ignore_grabbed"] then
+        if table.find(filters, "Ignore Grabbed") then
             if character:FindFirstChild("GRABBING_CONSTRAINT") then esp_hide(d) return end
-        end
-        if flags["hc_esp_wallcheck"] and entry.hrp then
-            esp_ray_params.FilterDescendantsInstances = { lp.Character, camera }
-            local origin = camera.CFrame.Position
-            local result = ws:Raycast(origin, (entry.hrp.Position - origin).Unit * 1000, esp_ray_params)
-            if not result or not result.Instance or not result.Instance:IsDescendantOf(character) then
-                esp_hide(d) return
-            end
         end
     end
     local x1, y1, x2, y2 = esp_get_bbox(entry)
@@ -1423,24 +1675,44 @@ local function esp_update(d, entry)
     local w, h = x2 - x1, y2 - y1
     local cx   = math.floor((x1 + x2) * 0.5)
 
-    if flags["Boxes"] then
-        local box_c = priority_color or fc("Box_Color", 255, 255, 255)
-        if flags["Box_Type"] == "Full" then
-            d.box.Position = Vector2.new(x1, y1)
-            d.box.Size     = Vector2.new(w, h)
-            d.box.Color    = box_c
-            d.box.Visible  = true
+    local boxes_cfg = amethyst['Esp']['Boxes']
+    if boxes_cfg['Enabled'] then
+        local bc = boxes_cfg['Colors']
+        local box_c = (bc and (bc[player_priority] or bc['Neutral'])) or Color3.new(1, 1, 1)
+        local box_type = boxes_cfg['Type'] or flags["Box_Type"] or "Corner"
+        if box_type == "Full" then
             for _, l in ipairs(d.corners) do l.Visible = false end
+            d.box.Position = Vector2.new(x1, y1)
+            d.box.Size = Vector2.new(w, h)
+            d.box.Color = box_c
+            d.box.Filled = false
+            d.box.Visible = true
+            local filled_cfg = boxes_cfg['Filled']
+            if filled_cfg['Enabled'] then
+                local fc = filled_cfg['Colors']
+                local fill_c = (fc and (fc[player_priority] or fc['Neutral'])) or Color3.new(1, 1, 1)
+                d.box_fill.Position = Vector2.new(x1, y1)
+                d.box_fill.Size = Vector2.new(w, h)
+                d.box_fill.Color = fill_c
+                local alpha = filled_cfg['Alpha'] or (filled_cfg['Transparency'] and (1 - filled_cfg['Transparency']) or 0.7)
+                d.box_fill.Transparency = 1 - alpha
+                d.box_fill.Visible = true
+            else
+                d.box_fill.Visible = false
+            end
         else
             esp_draw_corners(d, x1, y1, x2, y2, box_c)
             d.box.Visible = false
+            d.box_fill.Visible = false
         end
     else
         d.box.Visible = false
+        d.box_fill.Visible = false
         for _, l in ipairs(d.corners) do l.Visible = false end
     end
 
-    if flags["Healthbar"] then
+    local show_health = amethyst['Esp']['Health']['Enabled']
+    if show_health then
         local hum = entry.humanoid
         local hp  = hum and math.clamp(hum.Health / math.max(hum.MaxHealth, 1), 0, 1) or 1
         local bx  = x1 - 6
@@ -1453,51 +1725,81 @@ local function esp_update(d, entry)
         d.hbar_fill.Filled   = true
         d.hbar_fill.Position = Vector2.new(bx + 1, y2 - fh)
         d.hbar_fill.Size     = Vector2.new(2, fh)
-        local low_c  = flags["Health_Low"]  and flags["Health_Low"].Color
-        local high_c = flags["Health_High"] and flags["Health_High"].Color
+        local health_cfg = amethyst['Esp']['Health']
+        local low_c  = health_cfg['Low']
+        local high_c = health_cfg['High']
         d.hbar_fill.Color = (low_c and high_c) and low_c:Lerp(high_c, hp) or hp_color(hp)
         d.hbar_fill.Visible  = true
     else
-        d.hbar_bg.Visible = false; d.hbar_fill.Visible = false
+        d.hbar_bg.Visible = false
+        d.hbar_fill.Visible = false
     end
 
-    if flags["Names"] then
+    local show_names = amethyst['Esp']['Names']['Enabled']
+    if show_names then
+        local names_cfg = amethyst['Esp']['Names']
+        local nc = names_cfg['Colors']
+        local name_c = (nc and (nc[player_priority] or nc['Neutral'])) or Color3.new(1, 1, 1)
         local player = entry.player
         d.name.Text     = player and player.DisplayName or character.Name
         d.name.Position = Vector2.new(cx, math.floor(y1) - 15)
-        d.name.Color    = priority_color or fc("Name_Color", 255, 255, 255)
+        d.name.Color    = name_c
         d.name.Visible  = true
     else
         d.name.Visible = false
     end
 
-    if flags["Distance"] then
+    local show_dist = amethyst['Esp']['Distance']['Enabled']
+    if show_dist then
+        local dist_cfg = amethyst['Esp']['Distance']
+        local dc = dist_cfg['Colors']
+        local dist_c = (dc and (dc[player_priority] or dc['Neutral'])) or Color3.new(1, 1, 1)
         local lpc  = lp.Character
         local lhrp = lpc and lpc:FindFirstChild("HumanoidRootPart")
         local hrp  = entry.hrp
         local dist = (lhrp and hrp) and math.floor((hrp.Position - lhrp.Position).Magnitude) or 0
-        d.distance.Text     = dist .. "m"
+        d.distance.Text     = dist .. "st"
         d.distance.Position = Vector2.new(cx, math.floor(y2) + 3)
-        d.distance.Color    = fc("Distance_Color", 255, 255, 255)
+        d.distance.Color    = dist_c
         d.distance.Visible  = true
     else
         d.distance.Visible = false
     end
 
-    if flags["Weapon"] then
+    local show_weapon = amethyst['Esp']['Weapon']['Enabled']
+    if show_weapon then
+        local weapon_cfg = amethyst['Esp']['Weapon']
+        local wc = weapon_cfg['Colors']
+        local weapon_c = (wc and (wc[player_priority] or wc['Neutral'])) or Color3.new(1, 1, 1)
         local player = entry.player
         local wep    = "[ No Weapon ]"
         if player and player.Character then
             local tool = player.Character:FindFirstChildOfClass("Tool")
             if tool then wep = "[ " .. tool.Name .. " ]" end
         end
-        local y_off = flags["Distance"] and 16 or 3
+        local y_off = (show_dist and 16) or 3
         d.weapon.Text     = wep
         d.weapon.Position = Vector2.new(cx, math.floor(y2) + y_off)
-        d.weapon.Color    = fc("Weapon_Color", 255, 255, 255)
+        d.weapon.Color    = weapon_c
         d.weapon.Visible  = true
     else
         d.weapon.Visible = false
+    end
+
+    local tracer_cfg = amethyst['Esp']['Tracer']
+    if tracer_cfg['Enabled'] then
+        local tc = tracer_cfg['Colors']
+        local tracer_c = (tc and (tc[player_priority] or tc['Neutral'])) or Color3.new(1, 1, 1)
+        local vx, vy = camera.ViewportSize.X, camera.ViewportSize.Y
+        local from_y = tracer_cfg['From'] == 'Top' and 0 or vy
+        local from = Vector2.new(vx * 0.5, from_y)
+        local to = Vector2.new(cx, y2)
+        d.tracer.From = from
+        d.tracer.To = to
+        d.tracer.Color = tracer_c
+        d.tracer.Visible = true
+    else
+        d.tracer.Visible = false
     end
 end
 
@@ -1642,47 +1944,52 @@ local function get_target_from_center()
     local screen_center = vec2(camera.ViewportSize.X / 2, camera.ViewportSize.Y / 2)
     local unit_ray      = camera:ViewportPointToRay(screen_center.X, screen_center.Y)
     local wallcheck    = is_hood_customs and amethyst['HCTbChecks']['WallCheck'] or amethyst['TBChecks']['WallCheck']
+    local tb_checks    = is_hood_customs and amethyst['HCTbChecks'] or amethyst['TBChecks']
+
+    local player_chars = {}
+    local target_char = nil
+    local target_dist = math.huge
+    for _, p in ipairs(players:GetPlayers()) do
+        if p ~= lp and p.Character then
+            local entry = player_cache[p.Character] or { player = p, character = p.Character, head = p.Character:FindFirstChild("Head"), hrp = p.Character:FindFirstChild("HumanoidRootPart") }
+            if is_valid(entry, tb_checks) then
+                player_chars[#player_chars + 1] = p.Character
+                local hrp = p.Character:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    local sp = camera:WorldToViewportPoint(hrp.Position)
+                    local d = (vec2(sp.X, sp.Y) - screen_center).Magnitude
+                    if d < target_dist then target_dist = d target_char = p.Character end
+                end
+            end
+        end
+    end
+    if #player_chars == 0 then return nil end
 
     local result
     if wallcheck then
         RayParams.FilterType = Enum.RaycastFilterType.Exclude
         RayParams.FilterDescendantsInstances = { lp.Character, camera }
         result = ws:Raycast(unit_ray.Origin, unit_ray.Direction * 1000, RayParams)
-        if not result or not result.Instance then return nil end
-        local hit_part = result.Instance
-        local character = hit_part:FindFirstAncestorOfClass("Model")
-        if not character then return nil end
-        local player = players:GetPlayerFromCharacter(character)
-        if not player or player == lp then return nil end
-        local entry = player_cache[character] or { player = player, character = character, head = character:FindFirstChild("Head"), hrp = character:FindFirstChild("HumanoidRootPart") }
-        if not is_valid(entry, is_hood_customs and amethyst['HCTbChecks'] or amethyst['TBChecks']) then return nil end
-        local allowed = get_hitbox_part_names(character, amethyst['Triggerbot']['Hitbox'])
-        if not allowed[hit_part.Name] then return nil end
-        return entry
     else
-        local player_chars = {}
-        for _, p in ipairs(players:GetPlayers()) do
-            if p ~= lp and p.Character then
-                player_chars[#player_chars + 1] = p.Character
-            end
-        end
-        if #player_chars == 0 then return nil end
         local tb_params = RaycastParams.new()
         tb_params.FilterType = Enum.RaycastFilterType.Include
         tb_params.FilterDescendantsInstances = player_chars
         result = ws:Raycast(unit_ray.Origin, unit_ray.Direction * 1000, tb_params)
-        if not result or not result.Instance then return nil end
-        local hit_part = result.Instance
-        local character = hit_part:FindFirstAncestorOfClass("Model")
-        if not character then return nil end
-        local player = players:GetPlayerFromCharacter(character)
-        if not player or player == lp then return nil end
-        local entry = player_cache[character] or { player = player, character = character, head = character:FindFirstChild("Head"), hrp = character:FindFirstChild("HumanoidRootPart") }
-        if not is_valid(entry, is_hood_customs and amethyst['HCTbChecks'] or amethyst['TBChecks']) then return nil end
-        local allowed = get_hitbox_part_names(character, amethyst['Triggerbot']['Hitbox'])
-        if not allowed[hit_part.Name] then return nil end
-        return entry
     end
+
+    if not result or not result.Instance then return nil end
+    local hit_part = result.Instance
+    local character = hit_part:FindFirstAncestorOfClass("Model")
+    if not character then return nil end
+    if wallcheck and character ~= target_char then return nil end
+
+    local player = players:GetPlayerFromCharacter(character)
+    if not player or player == lp then return nil end
+    local entry = player_cache[character] or { player = player, character = character, head = character:FindFirstChild("Head"), hrp = character:FindFirstChild("HumanoidRootPart") }
+    if not is_valid(entry, tb_checks) then return nil end
+    local allowed = get_hitbox_part_names(character, amethyst['Triggerbot']['Hitbox'])
+    if not allowed[hit_part.Name] then return nil end
+    return entry
 end
 
 
@@ -1796,6 +2103,112 @@ end
 
 library:connection(run.PreRender, function()
     cached_focal = camera.ViewportSize.Y * 0.5 / math.tan(math.rad(camera.FieldOfView * 0.5))
+    local w = amethyst['World']
+    if w['Enabled'] then
+        lighting.FogColor = w['Fog']['Enabled'] and w['Fog']['Color'] or world_saved.FogColor
+        lighting.FogStart = w['Fog']['Enabled'] and w['Fog']['Start'] or world_saved.FogStart
+        lighting.FogEnd = w['Fog']['Enabled'] and w['Fog']['End'] or world_saved.FogEnd
+        lighting.Ambient = w['Ambient']['Enabled'] and w['Ambient']['Color'] or world_saved.Ambient
+        lighting.Brightness = w['Brightness']['Enabled'] and w['Brightness']['Value'] or world_saved.Brightness
+        lighting.ClockTime = w['ClockTime']['Enabled'] and w['ClockTime']['Value'] or world_saved.ClockTime
+        lighting.ExposureCompensation = w['WorldExposure']['Enabled'] and w['WorldExposure']['Value'] or world_saved.ExposureCompensation
+    else
+        lighting.FogColor = world_saved.FogColor
+        lighting.FogStart = world_saved.FogStart
+        lighting.FogEnd = world_saved.FogEnd
+        lighting.Ambient = world_saved.Ambient
+        lighting.Brightness = world_saved.Brightness
+        lighting.ClockTime = world_saved.ClockTime
+        lighting.ExposureCompensation = world_saved.ExposureCompensation
+    end
+    local sb = amethyst['Skyboxes']
+    if sb['Enabled'] and sb['Selected'] ~= 'None' then
+        local data = skyboxes_data[sb['Selected']]
+        if data then
+            if is_hood_customs then
+                local our_sky = lighting:FindFirstChild("AmethystSky")
+                if not our_sky then
+                    for _, sky in ipairs(lighting:GetChildren()) do
+                        if sky:IsA("Sky") then
+                            if not original_sky_saved then
+                                original_sky_saved = {
+                                    SkyboxUp = sky.SkyboxUp,
+                                    SkyboxDn = sky.SkyboxDn,
+                                    SkyboxFt = sky.SkyboxFt,
+                                    SkyboxBk = sky.SkyboxBk,
+                                    SkyboxLf = sky.SkyboxLf,
+                                    SkyboxRt = sky.SkyboxRt,
+                                    SunTextureId = sky.SunTextureId,
+                                }
+                            end
+                            sky:Destroy()
+                        end
+                    end
+                    local s = Instance.new("Sky")
+                    s.Name = "AmethystSky"
+                    s.SkyboxUp = data.SkyboxUp or ""
+                    s.SkyboxDn = data.SkyboxDn or ""
+                    s.SkyboxFt = data.SkyboxFt or ""
+                    s.SkyboxBk = data.SkyboxBk or ""
+                    s.SkyboxLf = data.SkyboxLf or ""
+                    s.SkyboxRt = data.SkyboxRt or ""
+                    if data.SunTextureId then s.SunTextureId = data.SunTextureId end
+                    s.Parent = lighting
+                else
+                    our_sky.SkyboxUp = data.SkyboxUp or ""
+                    our_sky.SkyboxDn = data.SkyboxDn or ""
+                    our_sky.SkyboxFt = data.SkyboxFt or ""
+                    our_sky.SkyboxBk = data.SkyboxBk or ""
+                    our_sky.SkyboxLf = data.SkyboxLf or ""
+                    our_sky.SkyboxRt = data.SkyboxRt or ""
+                    if data.SunTextureId then our_sky.SunTextureId = data.SunTextureId else our_sky.SunTextureId = "" end
+                end
+                if not amethyst['World']['ClockTime']['Enabled'] and lighting.TimeOfDay ~= "12:00:00" then lighting.TimeOfDay = "12:00:00" end
+            else
+                local sky = lighting:FindFirstChild("AmethystSky") or lighting:FindFirstChildOfClass("Sky")
+                if not sky or sky.Name ~= "AmethystSky" then
+                    if sky and sky:IsA("Sky") and not original_sky_saved then
+                        original_sky_saved = {
+                            SkyboxUp = sky.SkyboxUp,
+                            SkyboxDn = sky.SkyboxDn,
+                            SkyboxFt = sky.SkyboxFt,
+                            SkyboxBk = sky.SkyboxBk,
+                            SkyboxLf = sky.SkyboxLf,
+                            SkyboxRt = sky.SkyboxRt,
+                            SunTextureId = sky.SunTextureId,
+                        }
+                    end
+                    local existing = lighting:FindFirstChildOfClass("Sky")
+                    if existing then existing:Destroy() end
+                    sky = Instance.new("Sky")
+                    sky.Name = "AmethystSky"
+                    sky.Parent = lighting
+                end
+                sky.SkyboxUp = data.SkyboxUp or ""
+                sky.SkyboxDn = data.SkyboxDn or ""
+                sky.SkyboxFt = data.SkyboxFt or ""
+                sky.SkyboxBk = data.SkyboxBk or ""
+                sky.SkyboxLf = data.SkyboxLf or ""
+                sky.SkyboxRt = data.SkyboxRt or ""
+                if data.SunTextureId then sky.SunTextureId = data.SunTextureId end
+            end
+        end
+    else
+        local sky = lighting:FindFirstChild("AmethystSky")
+        if sky then sky:Destroy() end
+        if original_sky_saved then
+            local s = Instance.new("Sky")
+            s.SkyboxUp = original_sky_saved.SkyboxUp or ""
+            s.SkyboxDn = original_sky_saved.SkyboxDn or ""
+            s.SkyboxFt = original_sky_saved.SkyboxFt or ""
+            s.SkyboxBk = original_sky_saved.SkyboxBk or ""
+            s.SkyboxLf = original_sky_saved.SkyboxLf or ""
+            s.SkyboxRt = original_sky_saved.SkyboxRt or ""
+            if original_sky_saved.SunTextureId then s.SunTextureId = original_sky_saved.SunTextureId end
+            s.Parent = lighting
+            original_sky_saved = nil
+        end
+    end
     local ab_key = flags['ab_key']
     local tb_key = flags['tb_key']
     local ab_active = amethyst['Aimbot']['Enabled']     and (not ab_key or not ab_key.key or ab_key.active)
